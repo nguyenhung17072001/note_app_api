@@ -1,8 +1,10 @@
+'use strict';
 const User = require("../models/User");
-const {
-  mutipleMongooseToObject,
-  mongooseToObject,
-} = require("../../util/mongoose");
+const jwt = require('jsonwebtoken')
+
+const { mutipleMongooseToObject, mongooseToObject} = require("../../util/mongoose");
+
+
 const success = {
   status: 200,
   code: "SUCCESS",
@@ -17,15 +19,32 @@ class NewsControllers {
   // [Post] api/user/login
   login(req, res, next) {
     //console.log("body: ", req.body)
+    //Create token
+    
+    
+
+
     User.findOne({
       username: req.body.username,
       password: req.body.password,
     })
       .then((user) => {
         if (user) {
+         const token = jwt.sign(
+            { username: user.username, password: user.password },
+            'RESTFULAPIs',
+            {
+              expiresIn: "2h",
+            }
+          );
+          //console.log('token: ', token)
           res.json({
             ...success,
-            data: user,
+            data: {
+              user,
+              token: `JWT ${token}`
+            },
+            //token
           });
         } else {
           res.json(fail);
@@ -33,6 +52,8 @@ class NewsControllers {
       })
       .catch(next);
   }
+
+
 
   //[POST]/api/user/register
   register(req, res, next) {

@@ -1,6 +1,7 @@
 const Course = require('../models/Course')
 const {mutipleMongooseToObject, mongooseToObject} = require('../../util/mongoose')
 
+
 class CourseControllers {
     // [Get] /courses/:slug
     show(req, res, next) {
