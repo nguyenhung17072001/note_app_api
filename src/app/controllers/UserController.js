@@ -37,6 +37,7 @@ class NewsControllers {
               expiresIn: "2h",
             }
           );
+          
           //console.log('token: ', token)
           res.json({
             ...success,
