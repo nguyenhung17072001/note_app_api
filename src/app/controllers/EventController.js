@@ -34,10 +34,6 @@ class EventControllers {
     // [Post] api/event/insert/position
     insertPosition(req, res, next) {
         //res.send('Hung dzai')
-
-        
-        
-        
         User.find({position: req.body.position})
         .then((user)=> {
             //res.json(user)
@@ -49,7 +45,7 @@ class EventControllers {
                 }
                 let event = new Event(formData)
                 //
-                Event.findOne(formData).then((ev)=> {
+                Event.findOne({time: req.body.time}).then((ev)=> {
                     if(ev){
                         res.json({
                             message: "Lịch bị trùng"
@@ -68,6 +64,39 @@ class EventControllers {
         })
         .catch(next)
 
+    }
+
+    //[Post] /api/event/insert/person?userId
+    insertPerson(req, res, next) {
+        //res.send('anh hung dep zai')
+        
+        
+        User.findOne({_id: req.query.userId})
+        .then((user)=> {
+            
+            let formData= {
+                ...req.body,
+                name: user.name,
+                userId: user._id,
+                position: user.position
+            }
+            //console.log("formData: ", formData)
+            
+            let event = new Event(formData)
+            
+            Event.findOne({time: req.body.time})
+            .then((ev)=> {
+                if(ev) {
+                    res.json({
+                        message: "Thất bị vì bị trùng lịch"
+                    })
+                } else {
+                    event.save()
+                    res.json(success)
+                }
+            })
+        })
+        
     }
 
 
