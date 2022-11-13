@@ -20,7 +20,7 @@ class EventControllers {
         //console.log('req.query: ', req.query)
         Event.find({userId: req.body.userId})
         .then((event)=> {
-            res.json({
+            res.status(200).json({
                 ...success,
                 data: event,
                 total: event.length,
@@ -52,7 +52,7 @@ class EventControllers {
                         })
                     } else{
                         event.save()
-                        .then(()=> res.json(success))
+                        .then(()=> res.status(200).json(success))
                         
                     
                     }
@@ -92,7 +92,7 @@ class EventControllers {
                     })
                 } else {
                     event.save()
-                    res.json(success)
+                    res.status(200).json(success)
                 }
             })
         })
