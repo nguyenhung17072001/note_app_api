@@ -19,6 +19,8 @@ class NewsControllers {
   // [Post] api/user/login
   login(req, res, next) {
     //console.log("body: ", req.body)
+    //console.log("params: ", req.params)
+    //console.log("query: ", req.query)
     //Create token
     
     
@@ -39,10 +41,11 @@ class NewsControllers {
           );
           
           //console.log('token: ', token)
-          res.json({
+          res.status(200).json({
             ...success,
             data: {
-              user,
+              ...user,
+              password: 'security',
               token: `JWT ${token}`
             },
             //token

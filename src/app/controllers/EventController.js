@@ -18,14 +18,31 @@ class EventControllers {
     // [Get] /event/list/person
     list(req, res, next) {
         //console.log('req.query: ', req.query)
-        Event.find({userId: req.body.userId})
+        //const formData = req.query
+        //formData.userId = req.body.userId
+        //req.body = req.query;
+        console.log('req.body: ', req.body)
+        console.log('req.params: ', req.params)
+        console.log('req.query: ', req.query)
+        
+        Event.find({userId: req.body.userId  || req.query.userId})
         .then((event)=> {
-            res.status(200).json({
-                ...success,
-                data: event,
-                total: event.length,
-
-            })
+            if(!event) {
+                res.json({
+                    message: "Không tìm thấy event nào"
+                })
+            }else {
+                res.status(200).json({
+                    ...success,
+                    data: event.sort(function(a,b){
+                        // Turn your strings into dates, and then subtract them
+                        // to get a value that is either negative, positive, or zero.
+                        return new Date(a.time) - new Date(b.time);
+                      }),
+                    total: event.length,
+    
+                })
+            }
             
         })
         .catch(next)
