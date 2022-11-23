@@ -44,11 +44,10 @@ class NewsControllers {
           res.status(200).json({
             ...success,
             data: {
-              ...user,
-              password: 'security',
+              user,
               token: `JWT ${token}`
             },
-            //token
+            
           });
         } else {
           res.json(fail);

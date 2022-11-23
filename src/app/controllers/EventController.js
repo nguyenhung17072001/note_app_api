@@ -110,11 +110,13 @@ class EventControllers {
                 } else {
                     event.save()
                     res.status(200).json(success)
+                    
                 }
             })
         })
         
     }
+
 
 
 }
