@@ -27,13 +27,14 @@ class NewsControllers {
 
 
     User.findOne({
-      username: req.body.username,
+      username: req.body.username.toLowerCase(),
       password: req.body.password,
     })
       .then((user) => {
         if (user) {
          const token = jwt.sign(
-            { username: user.username, password: user.password },
+            { username: user.username, 
+              password: user.password },
             'RESTFULAPIs',
             {
               expiresIn: "2h",

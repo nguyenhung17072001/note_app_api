@@ -3,6 +3,7 @@ const User = require("../models/User");
 const FCM = require("fcm-node");
 
 const { mutipleMongooseToObject, mongooseToObject} = require("../../util/mongoose");
+const { json } = require("express");
 const SERVER_KEY = "AAAAX_oOyes:APA91bGXtfGKFhOGQA7U_I2Pr_Da23b8iHs6DrHYOKh4XlgzITDP6FolRzj09hMxbASDve9at5drdBVtudrWL4M8J-y71FFxQixrTXUuAnjVK0SYZlAgQO_uJpexCku0YUXUQFGJagyh";
 
 const success = {
@@ -21,25 +22,34 @@ class NewsControllers {
         
         try {
             let fcm = new FCM(SERVER_KEY);
+            let notification= {
+                title: req.body.title,
+                body: req.body.body,
+                sound: 'default',
+                "click_action": "FCM_PLUGIN_ACTIVITY",
+                "icon": "fcm_push_icon"
+            }
+
             let message = {
-                to: '/topics/'+ req.body.topic,
-                notification: {
-                    title: req.body.title,
-                    body: req.body.body,
-                    sound: 'default',
-                    "click_action": "FCM_PLUGIN_ACTIVITY",
-                    "icon": "fcm_push_icon"
-                },
+                to: 'fW3C8u4ITuqeOeqYC_ST_C:APA91bHE3VaEqcEEUCMnLzSYStQY3LSAIOFfMm9tiBu9jZBt_X060FsdLUbP-lNwKyuUxLXMDImKdXvmSRkoLeqORqjE7-TsIGsiDImWkmVmxerr6ND80hVnOyljNmtFTGRyTIbdEpS_',
+                notification,
                 data: req.body.data
                 
             }
 
+            
             fcm.send(message, (err, response)=> {
                 if(err) {
                     next(err);
                 }
                 else {
-                    res.json(response);
+                    //res.json(JSON.parse(response));
+                    let resp={
+                        ...notification,
+                        ...JSON.parse(response) 
+                    }
+                    res.json(resp)
+                    
                 }
             })
             
