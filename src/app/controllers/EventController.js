@@ -16,20 +16,21 @@ const fail = {
 class EventControllers {
 
     // [Get] /event/list/person
-    list(req, res, next) {
+    async list(req, res, next) {
         //console.log('req.query: ', req.query)
         //const formData = req.query
         //formData.userId = req.body.userId
         //req.body = req.query;
-        console.log('req.body: ', req.body)
-        console.log('req.params: ', req.params)
-        console.log('req.query: ', req.query)
+        console.log('req.body: ', req.body);
+        console.log('req.params: ', req.params);
+        console.log('req.query: ', req.query);
         
         Event.find({userId: req.body.userId  || req.query.userId})
         .then((event)=> {
             if(!event) {
                 res.json({
-                    message: "Không tìm thấy event nào"
+                    message: "Không tìm thấy event nào",
+                    
                 })
             }else {
                 res.status(200).json({
@@ -84,7 +85,7 @@ class EventControllers {
     }
 
     //[Post] /api/event/insert/person?userId
-    insertPerson(req, res, next) {
+    async insertPerson(req, res, next) {
         //res.send('anh hung dep zai')
         
         

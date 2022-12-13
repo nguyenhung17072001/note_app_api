@@ -22,10 +22,8 @@ class NewsControllers {
     //console.log("params: ", req.params)
     //console.log("query: ", req.query)
     //Create token
-    
-    
 
-
+    
     User.findOne({
       username: req.body.username.toLowerCase(),
       password: req.body.password,

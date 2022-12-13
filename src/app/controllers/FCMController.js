@@ -1,7 +1,8 @@
 'use strict';
 const User = require("../models/User");
 const FCM = require("fcm-node");
-
+const DeviceToken = require('../models/DeviceToken');
+const Notification = require("../models/Notification");
 const { mutipleMongooseToObject, mongooseToObject} = require("../../util/mongoose");
 const { json } = require("express");
 const SERVER_KEY = "AAAAX_oOyes:APA91bGXtfGKFhOGQA7U_I2Pr_Da23b8iHs6DrHYOKh4XlgzITDP6FolRzj09hMxbASDve9at5drdBVtudrWL4M8J-y71FFxQixrTXUuAnjVK0SYZlAgQO_uJpexCku0YUXUQFGJagyh";
@@ -29,33 +30,59 @@ class NewsControllers {
                 "click_action": "FCM_PLUGIN_ACTIVITY",
                 "icon": "fcm_push_icon"
             }
-
-            let message = {
-                to: 'fW3C8u4ITuqeOeqYC_ST_C:APA91bHE3VaEqcEEUCMnLzSYStQY3LSAIOFfMm9tiBu9jZBt_X060FsdLUbP-lNwKyuUxLXMDImKdXvmSRkoLeqORqjE7-TsIGsiDImWkmVmxerr6ND80hVnOyljNmtFTGRyTIbdEpS_',
-                notification,
-                data: req.body.data
-                
-            }
-
             
-            fcm.send(message, (err, response)=> {
-                if(err) {
-                    next(err);
-                }
-                else {
-                    //res.json(JSON.parse(response));
-                    let resp={
-                        ...notification,
-                        ...JSON.parse(response) 
-                    }
-                    res.json(resp)
+
+            DeviceToken.find({
+                userId: req.body.userId,
+                
+            }).then((devices)=> {
+                const noti = new Notification({
+                    userId: req.body.userId,
+                    body: notification.body,
+                    title: notification.title,
+                });
+
+                if(devices) {
+                    devices.forEach((device)=> {
+                        let message={
+                            to: device.token,
+                            notification,
+                            data: req.body.data
+                        }
+                        //let mess = mutipleMongooseToObject(message)
+                        //console.log(mess)
+                        fcm.send(message, (err, response)=> {
+                            if(err) {
+                                //console.log('errr')
+                                //next(err);
+                                return res.status(500).json(err)
+                            }
+                            else {
+                                //res.json(JSON.parse(response));
+                                let resp={
+                                    ...notification,
+                                    ...JSON.parse(response) 
+                                }
+                                noti.save()
+                                return res.json(resp)
+                                
+                            }
+                        })
+
+                    })
                     
+                    
+                } else{
+                    res.json({fail})
                 }
             })
+
+            
             
         }
         catch(err) {
             console.log('err push notification', err)
+            next(err)
         }
     }
     
