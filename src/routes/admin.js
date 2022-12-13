@@ -6,7 +6,10 @@ const adminController = require('../app/controllers/AdminController')
 //newsController.index
 
 //search for person by id
-router.get('/', adminController.login)
+router.get('/', adminController.login);
+router.post('/login/action', adminController.loginAction);
+router.get('/home', adminController.showHome);
+router.get('/upload/:id', adminController.upload)
 
 
 //login

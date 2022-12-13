@@ -64,7 +64,8 @@ class NewsControllers {
                                     ...JSON.parse(response) 
                                 }
                                 noti.save()
-                                return res.json(resp)
+                                res.redirect('/admin/home')
+                                //res.json(resp)
                                 
                             }
                         })
