@@ -55,6 +55,10 @@ class AdminController {
         });
     }
 
+    event(req, res, next) {
+        res.render('admin/event')
+    }
+
 
 
 

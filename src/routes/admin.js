@@ -9,7 +9,8 @@ const adminController = require('../app/controllers/AdminController')
 router.get('/', adminController.login);
 router.post('/login/action', adminController.loginAction);
 router.get('/home', adminController.showHome);
-router.get('/upload/:id', adminController.upload)
+router.get('/upload/:id', adminController.upload);
+router.get('/event', adminController.event)
 
 
 //login

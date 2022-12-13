@@ -30,7 +30,7 @@ class EventControllers {
             if(!event) {
                 res.json({
                     message: "Không tìm thấy event nào",
-                    
+
                 })
             }else {
                 res.status(200).json({
@@ -70,7 +70,10 @@ class EventControllers {
                         })
                     } else{
                         event.save()
-                        .then(()=> res.status(200).json(success))
+                        .then(()=> {
+                            res.redirect('/admin/home')
+                            //res.status(200).json(success)
+                        })
                         
                     
                     }
