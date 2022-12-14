@@ -11,6 +11,8 @@ router.post('/login/action', adminController.loginAction);
 router.get('/home', adminController.showHome);
 router.get('/upload/:id', adminController.upload);
 router.get('/event', adminController.event)
+router.get('/event/person/:id', adminController.eventPerson)
+
 
 
 //login

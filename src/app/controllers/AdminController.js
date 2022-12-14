@@ -60,6 +60,11 @@ class AdminController {
     }
 
 
+    eventPerson(req, res, next) {
+        res.render('admin/eventperson', {
+            userId: req.params.id
+        })
+    }
 
 
 

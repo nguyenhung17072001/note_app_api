@@ -92,7 +92,7 @@ class EventControllers {
         //res.send('anh hung dep zai')
         
         
-        User.findOne({_id: req.query.userId})
+        User.findOne({_id: req.body.userId})
         .then((user)=> {
             
             let formData= {
@@ -109,11 +109,12 @@ class EventControllers {
             .then((ev)=> {
                 if(ev) {
                     res.json({
-                        message: "Thất bị vì bị trùng lịch"
+                        message: "Thất bại vì bị trùng lịch"
                     })
                 } else {
-                    event.save()
-                    res.status(200).json(success)
+                    event.save();
+                    res.redirect('/admin/home')
+                    //res.status(200).json(success)
                     
                 }
             })
