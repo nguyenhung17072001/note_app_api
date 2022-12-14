@@ -55,16 +55,18 @@ class NotificationController {
 
 
     async searchs(req, res, next) {
-        console.log('req.body: ', req.body)
+        /* console.log('req.body: ', req.body)
         console.log('req.params: ', req.params)
-        console.log('req.query: ', req.query)
-        Notification.find({userId: req.body.userId})
+        console.log('req.query: ', req.query) */
+        Notification.find({userId: req.query.userId})
         .then((notification)=>{
             if(notification) {
                 //console.log(req.body.userId)
                 res.json({
                     ...success,
-                    data: notification,
+                    data: notification.sort((a, b)=> {
+                        return new Date(b.createdAt) - new Date(a.createdAt);
+                    }),
                     total: notification.length
                 })
                 
