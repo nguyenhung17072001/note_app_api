@@ -7,6 +7,6 @@ const fcmController = require('../app/controllers/FCMController')
 
 
 router.post('/notification/push', fcmController.pushNotification)
-
+router.post('/notification/service', fcmController.pushNotificationService)
 
 module.exports = router;

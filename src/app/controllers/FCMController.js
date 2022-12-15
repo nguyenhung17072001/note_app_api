@@ -1,6 +1,10 @@
 'use strict';
 const User = require("../models/User");
 const FCM = require("fcm-node");
+const Event = require("../models/Event")
+
+const schedule = require('node-schedule'); // hen gio
+const moment = require('moment');
 const DeviceToken = require('../models/DeviceToken');
 const Notification = require("../models/Notification");
 const { mutipleMongooseToObject, mongooseToObject} = require("../../util/mongoose");
@@ -47,7 +51,7 @@ class NewsControllers {
                         let message={
                             to: device.token,
                             notification,
-                            data: req.body.data
+                            //data: req.body.data
                         }
                         //let mess = mutipleMongooseToObject(message)
                         //console.log(mess)
@@ -85,6 +89,107 @@ class NewsControllers {
             console.log('err push notification', err)
             next(err)
         }
+    }
+
+    async pushNotificationService(req, res, next) {
+        schedule.scheduleJob({hour: 1, minute: 7}, ()=> {
+            
+            try{
+                let fcm = new FCM(SERVER_KEY);
+                //console.log('date: ', moment('2022-12-15T07:30:00.000Z').format('L'))
+                Event.find({})
+                .then((events)=> {
+                    //console.log("events :", events);
+                    let matchingEvent = events.filter((event)=> {
+                        let eventOfToday = moment(event.time).format('L');
+                        let today = moment(new Date).format('L');
+                        return eventOfToday==today
+                    });
+                    console.log(matchingEvent);
+
+                    let listHours = matchingEvent.map((event)=> {
+                        return moment(event.time).format('LT');
+                        
+                    }).toString();
+                    
+                    DeviceToken.find({})
+                    .then((devices)=> {
+                        if(devices) {
+                            
+                            devices.forEach((device)=> {
+                                let notification= {
+                                    title: `Bạn có lịch vào lúc ${listHours} ngày hôm nay`,
+                                    body: 'Thông báo về lịch',
+                                    sound: 'default',
+                                    "click_action": "FCM_PLUGIN_ACTIVITY",
+                                    "icon": "fcm_push_icon"
+                                }
+                                let message={
+                                    to: device.token,
+                                    notification,
+                                    //data: req.body.data
+                                }
+                                fcm.send(message, (err, response)=> {
+                                    if(err) {
+                                        console.log('errr')
+                                        
+                                        
+                                    }
+                                    else {
+                                        //res.json(JSON.parse(response));
+                                        let resp={
+                                            ...notification,
+                                            ...JSON.parse(response) 
+                                        }
+                                        const noti = new Notification({
+                                            userId: device.userId,
+                                            body: `Bạn có lịch vào lúc ${listHours} `,
+                                            title: 'Thông báo về lịch',
+                                        });
+                                        noti.save()
+                                        //res.redirect('/admin/home')
+                                        //res.json(resp)
+                                        
+                                    }
+                                })
+                            })
+                        }
+                    })
+                    
+                    
+                })
+
+                
+
+
+                
+            } catch(err) {
+                next(err);
+            }
+        });
+        
+        
+        /* res.json({
+            hung: 'hi'
+        }); */
+
+        
+        /* try {
+            let fcm = new FCM(SERVER_KEY);
+            let notification= {
+                title: req.body.title,
+                body: req.body.body,
+                sound: 'default',
+                "click_action": "FCM_PLUGIN_ACTIVITY",
+                "icon": "fcm_push_icon"
+            }
+
+
+        } catch (error) {
+            //console.log("error: ", error)
+            next(error)
+        } */
+
     }
     
 }
